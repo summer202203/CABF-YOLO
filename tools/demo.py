@@ -15,7 +15,7 @@ from yolox.data.data_augment import ValTransform
 from yolox.data.datasets import COCO_CLASSES
 from yolox.exp import get_exp
 from yolox.utils import fuse_model, get_model_info, postprocess, vis
-
+from yolox.utils.draw_cam import *
 IMAGE_EXT = [".jpg", ".jpeg", ".webp", ".bmp", ".png"]
 
 
@@ -54,7 +54,7 @@ def make_parser():
     )
     parser.add_argument("--conf", default=0.3, type=float, help="test conf")
     parser.add_argument("--nms", default=0.3, type=float, help="test nms threshold")
-    parser.add_argument("--tsize", default=None, type=int, help="test img size")
+    parser.add_argument("--tsize", default=640, type=int, help="test img size")
     parser.add_argument(
         "--fp16",
         dest="fp16",
@@ -99,15 +99,15 @@ def get_image_list(path):
 
 class Predictor(object):
     def __init__(
-        self,
-        model,
-        exp,
-        cls_names=COCO_CLASSES,
-        trt_file=None,
-        decoder=None,
-        device="cpu",
-        fp16=False,
-        legacy=False,
+            self,
+            model,
+            exp,
+            cls_names=COCO_CLASSES,
+            trt_file=None,
+            decoder=None,
+            device="cpu",
+            fp16=False,
+            legacy=False,
     ):
         self.model = model
         self.cls_names = cls_names
@@ -129,6 +129,14 @@ class Predictor(object):
             self.model(x)
             self.model = model_trt
 
+    ####   new code
+    def get_tensor(self, img):
+        img = cv2.imread(img)
+        img, _ = self.preproc(img, None, self.test_size)
+        img = torch.from_numpy(img).unsqueeze(0)
+        img = img.float()
+        return img
+    ####   new code
     def inference(self, img):
         img_info = {"id": 0}
         if isinstance(img, str):
@@ -306,6 +314,10 @@ def main(exp, args):
         model, exp, COCO_CLASSES, trt_file, decoder,
         args.device, args.fp16, args.legacy,
     )
+    ####   new code
+    img = predictor.get_tensor(args.path)
+    get_cam(model, img, args.path,exp.test_size)
+    ####   new code
     current_time = time.localtime()
     if args.demo == "image":
         image_demo(predictor, vis_folder, args.path, current_time, args.save_result)

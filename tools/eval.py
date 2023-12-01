@@ -39,9 +39,9 @@ def make_parser():
         type=str,
         help="url used to set up distributed training",
     )
-    parser.add_argument("-b", "--batch-size", type=int, default=64, help="batch size")
+    parser.add_argument("-b", "--batch-size", type=int, default=16, help="batch size")
     parser.add_argument(
-        "-d", "--devices", default=None, type=int, help="device for training"
+        "-d", "--devices", default=0, type=int, help="device for training"
     )
     parser.add_argument(
         "--num_machines", default=1, type=int, help="num of node for training"
@@ -52,7 +52,7 @@ def make_parser():
     parser.add_argument(
         "-f",
         "--exp_file",
-        default=None,
+        default='exps/example/yolox_voc/yolox_voc_s.py',
         type=str,
         help="please input your experiment description file",
     )
@@ -99,7 +99,7 @@ def make_parser():
     parser.add_argument(
         "--speed",
         dest="speed",
-        default=False,
+        default=True,
         action="store_true",
         help="speed test only.",
     )

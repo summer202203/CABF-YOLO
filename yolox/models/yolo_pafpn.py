@@ -3,10 +3,11 @@
 # Copyright (c) Megvii Inc. All rights reserved.
 
 import torch
+from torch._C import InferredType
 import torch.nn as nn
 
 from .darknet import CSPDarknet
-from .network_blocks import BaseConv, CSPLayer, DWConv
+from .network_blocks import BaseConv, CSPLayer, DWConv, CAM, CBAM, SE, ECA, InCSPLayer
 
 
 class YOLOPAFPN(nn.Module):
@@ -28,6 +29,13 @@ class YOLOPAFPN(nn.Module):
         self.in_features = in_features
         self.in_channels = in_channels
         Conv = DWConv if depthwise else BaseConv
+
+        ### 在dark5分支后加入CAM 模块（该分支是主干网络传入FPN的过程中）
+        ### in_channels = [256, 512, 1024],forward从dark5开始进行，所以cam_1为dark5
+        self.cam_1 = CAM(int(in_channels[2] * width)) # 对应dark5输出的1024维度通道
+        # self.cbam_1 = CBAM(int(in_channels[2] * width))
+        # self.se_1 = SE(int(in_channels[2] * width))
+        # self.eca_1 = ECA(int(in_channels[2] * width))
 
         self.upsample = nn.Upsample(scale_factor=2, mode="nearest")
         self.lateral_conv0 = BaseConv(
@@ -71,7 +79,8 @@ class YOLOPAFPN(nn.Module):
         self.bu_conv1 = Conv(
             int(in_channels[1] * width), int(in_channels[1] * width), 3, 2, act=act
         )
-        self.C3_n4 = CSPLayer(
+        
+        self.C3_In4 = InCSPLayer(
             int(2 * in_channels[1] * width),
             int(in_channels[2] * width),
             round(3 * depth),
@@ -79,6 +88,7 @@ class YOLOPAFPN(nn.Module):
             depthwise=depthwise,
             act=act,
         )
+
 
     def forward(self, input):
         """
@@ -93,6 +103,14 @@ class YOLOPAFPN(nn.Module):
         out_features = self.backbone(input)
         features = [out_features[f] for f in self.in_features]
         [x2, x1, x0] = features
+
+        # 直接对输入的特征图使用注意力机制
+        x0 = self.cam_1(x0)
+        # x0 = self.cbam_1(x0)
+        # x0 = self.se_1(x0)
+        # x0 = self.eca_1(x0)
+        #################################
+
 
         fpn_out0 = self.lateral_conv0(x0)  # 1024->512/32
         f_out0 = self.upsample(fpn_out0)  # 512/16
@@ -111,6 +129,7 @@ class YOLOPAFPN(nn.Module):
         p_out0 = self.bu_conv1(pan_out1)  # 512->512/32
         p_out0 = torch.cat([p_out0, fpn_out0], 1)  # 512->1024/32
         pan_out0 = self.C3_n4(p_out0)  # 1024->1024/32
+        # pan_out0 = self.C3_In4(p_out0)  # 1024->1024/32
 
         outputs = (pan_out2, pan_out1, pan_out0)
         return outputs
