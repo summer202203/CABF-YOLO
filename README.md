@@ -1,4 +1,5 @@
 # 运行程序
+本代码是基于[YOLOX模型](https://github.com/Megvii-BaseDetection/YOLOX)，针对带钢表面缺陷数据集，对模型做出的改进与优化
 ```
 git clone https://github.com/Megvii-BaseDetection/YOLOX
 cd /content/drive/MyDrive/YOLOX
