@@ -6,7 +6,8 @@ pip3 install -v -e .
 python3 tools/train.py -f exps/example/yolox_voc/yolox_voc_s.py --fp16 -o
 ```
 # 数据集
-* 数据集采用VOC形式，NEU-DET数据集官网地址：[NEU-DET使用说明](http://faculty.neu.edu.cn/songkechen/zh_CN/zdylm/263270/list/index.htm) 
+* NEU-DET数据集官网地址：[NEU-DET使用说明](http://faculty.neu.edu.cn/songkechen/zh_CN/zdylm/263270/list/index.htm)
+* 数据集采用VOC形式，整理后的数据集可直接用于代码：[谷歌云盘](https://drive.google.com/drive/folders/1PCIGSFXW0SkgDWaUckYHXluPAwK6oqfY?usp=sharing)
 
 # 可视化
 ## 使用tensorboard
