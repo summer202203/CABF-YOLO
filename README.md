@@ -15,6 +15,33 @@ Load the TensorBoard notebook extension
 load_ext tensorboard
 tensorboard --logdir=YOLOX_outputs/yolox_ca/tensorboard/ --port='6001' --bind_all
 ```
+# 消融实验
+## 注意力机制消融实验
+1、\yolox\models\yolo_pafpn.py
+```
+        # 直接对输入的特征图使用注意力机制
+        x0 = self.cam_1(x0)
+        # x0 = self.cbam_1(x0)
+        # x0 = self.se_1(x0)
+        # x0 = self.eca_1(x0)
+        #################################
+```
+2、yolox\models\network_blocks.py：不同注意力机制的具体算法代码模块
+## TCCA、BF、EIOU消融实验
+TCCA: \yolox\models\yolo_pafpn.py
+```
+        # 直接对输入的特征图使用注意力机制
+        x0 = self.cam_1(x0)
+```
+BF: \yolox\models\yolo_pafpn.py
+```
+        # pan_out0 = self.C3_n4(p_out0)  # 1024->1024/32
+        pan_out0 = self.C3_In4(p_out0)  # 1024->1024/32
+```
+EIOU: yolox\models\losses.py
+```
+    def __init__(self, reduction="none", loss_type="eiou"):
+```
 
 # 最佳实验结果
 ```
