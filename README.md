@@ -1,8 +1,8 @@
 # 运行程序
 本代码是基于[YOLOX模型](https://github.com/Megvii-BaseDetection/YOLOX)，针对带钢表面缺陷数据集，对模型做出的改进与优化
 ```
-git clone https://github.com/Megvii-BaseDetection/YOLOX
-cd /content/drive/MyDrive/YOLOX
+git clone https://github.com/summer202203/CABF-YOLO.git
+cd CABF-YOLO
 pip3 install -v -e .
 python3 tools/train.py -f exps/example/yolox_voc/yolox_voc_s.py --fp16 -o
 ```
