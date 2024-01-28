@@ -7,22 +7,23 @@ pip3 install -v -e .
 python3 tools/train.py -f exps/example/yolox_voc/yolox_voc_s.py --fp16 -o
 ```
 # Dataset
+## In order to validate the robustness and generalization of the model, we validate the model on two publicly available strip steel surface defect datasets.
 * NEU-DET dataset link: [NEU-DET](http://faculty.neu.edu.cn/songkechen/zh_CN/zdylm/263270/list/index.htm)
-* The code can be in the form of both VOC and COCO data, and we used the VOC dataset form in our experiments, which can be used directly in the code after organizing the dataset: [Google Drive](https://drive.google.com/drive/folders/1PCIGSFXW0SkgDWaUckYHXluPAwK6oqfY?usp=sharing)
+* GC10-DET dataset link: [GC10-DET](https://github.com/lvxiaoming2019/GC10-DET-Metallic-Surface-Defect-Datasets.git))
+* The code can be in the form of both VOC and COCO data, and we used the VOC dataset form in our experiments, which can be used directly in the code after organizing the NEU-DET dataset: [Google Drive](https://drive.google.com/drive/folders/1PCIGSFXW0SkgDWaUckYHXluPAwK6oqfY?usp=sharing and GC10-DET dataset: [Google Drive](https://drive.google.com/drive/folders/1RkPZWtg4HK_Quq0t41WqS9-9GyYNFbId?usp=drive_link).
 
 # Visualization
 ## Using tensorboard: you first need to download tensorboard, and then run the following command to realize the visualization operation.
 ```
-Load the TensorBoard notebook extension
-load_ext tensorboard
-tensorboard --logdir=YOLOX_outputs/yolox_ca/tensorboard/ --port='6001' --bind_all
+# Load the TensorBoard notebook extension
+tensorboard --logdir=YOLOX_outputs/tensorboard/ --port='6001' --bind_all
 ```
 # Comparison experiment
 
-## Comparison with SOTA object detectors on the NEU-DET dataset.
-Experiments are performed on the NEU-DET dataset using the generic model, and the YOLOv3 to YOLOv8 models are available for download on your own.
+## Comparison with SOTA object detectors.
+Experiments are performed on the NEU-DET and GC10-DET datasets using the generic model, and the YOLOv3 to YOLOv8 models are available for download on your own.
 
-##  Comparison of the effects of different attention mechanism modules on the NEU-DET dataset.
+##  Comparison of the effects of different attention mechanism modules.
 To conduct experiments comparing attention mechanisms, only some of the code needs to be modified in the \yolox\models\yolo_pafpn.py. Add: the specific algorithms for the different attention mechanisms are implemented in yolox\models\network_blocks.py.
 ```
         # Use the attention mechanism directly on the input feature map
